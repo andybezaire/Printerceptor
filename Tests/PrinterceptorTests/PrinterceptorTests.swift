@@ -8,16 +8,16 @@ struct PrinterceptorTests {
     func determineFunctionSignature() async throws {
         let sut = "Hello, World!"
 
-        let captured: String = interceptStdout {
+        let captured: String = try await interceptStdout {
             print(sut)
         }
 
-        #expect(captured == "Hello, World!")
+        #expect(captured == "Hello, World!\n")
     }
 
     @Suite
     struct InterceptStdoutTests {
-        @Test @MainActor
+        @Test
         func captureData() async throws {
             let sut = "Hello, World!"
 
@@ -28,11 +28,20 @@ struct PrinterceptorTests {
             #expect(intercepted == .init([72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33, 10]))
         }
 
-        @Test @MainActor
+        @Test
         func noPrintCapturesEmptyData() async throws {
             let intercepted: Data = try await interceptStdout { }
 
             #expect(intercepted.isEmpty)
         }
+
+//        @Test
+//        func doesNotCaptureBefore() async throws {
+//            print("Before should not be captured")
+//
+//            let intercepted: Data = try await interceptStdout { }
+//
+//            #expect(intercepted.isEmpty)
+//        }
     }
 }

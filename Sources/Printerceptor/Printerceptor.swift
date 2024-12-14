@@ -16,16 +16,11 @@ import Foundation
 ///
 /// - Parameter expression: the code that prints to `stdout`
 /// - Returns: string version of `stdout`
-public func interceptStdout(_ expression: () -> Void) -> String {
-    let intercepted = Pipe()
+@MainActor
+public func interceptStdout(_ expression: () -> Void) async throws -> String {
+    let captured: Data = try await interceptStdout(expression)
 
-    dup2(
-        intercepted.fileHandleForWriting.fileDescriptor,
-        FileHandle.standardOutput.fileDescriptor
-    )
-
-    expression()
-    return "Hello, World!"
+    return .init(data: captured, encoding: .utf8) ?? ""
 }
 
 @MainActor
