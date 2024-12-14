@@ -27,5 +27,12 @@ struct PrinterceptorTests {
 
             #expect(intercepted == .init([72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33, 10]))
         }
+
+        @Test @MainActor
+        func noPrintCapturesEmptyData() async throws {
+            let intercepted: Data = try await interceptStdout { }
+
+            #expect(intercepted.isEmpty)
+        }
     }
 }
