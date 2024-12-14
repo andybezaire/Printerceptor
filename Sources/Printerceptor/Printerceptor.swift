@@ -1,3 +1,5 @@
+import Foundation
+
 /// Intercept and return stdout
 ///
 /// ```swift
@@ -14,7 +16,15 @@
 ///
 /// - Parameter expression: the code that prints to `stdout`
 /// - Returns: string version of `stdout`
-public func interceptStdout(_ expression: () throws -> Void) -> String {
-    "Hello, World!"
+public func interceptStdout(_ expression: () -> Void) -> String {
+    let intercepted = Pipe()
+
+    dup2(
+        intercepted.fileHandleForWriting.fileDescriptor,
+        FileHandle.standardOutput.fileDescriptor
+    )
+
+    expression()
+    return "Hello, World!"
 }
 
