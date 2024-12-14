@@ -26,13 +26,12 @@ public func interceptStdout(_ expression: () -> Void) async throws -> String {
 @MainActor
 internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
     let intercepted = Pipe()
+    let interceptedOut = intercepted.fileHandleForWriting.fileDescriptor
+
     let stdout = FileHandle.standardOutput.fileDescriptor
     let restoreForStdout = dup(stdout)
 
-    dup2(
-        intercepted.fileHandleForWriting.fileDescriptor,
-        stdout
-    )
+    dup2(interceptedOut, stdout)
 
     var data: Data = Data()
 
