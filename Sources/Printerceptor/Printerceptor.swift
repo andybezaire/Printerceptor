@@ -26,10 +26,12 @@ public func interceptStdout(_ expression: () -> Void) async throws -> String {
 @MainActor
 internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
     let intercepted = Pipe()
+    let stdout = FileHandle.standardOutput.fileDescriptor
+    let restoreForStdout = dup(stdout)
 
     dup2(
         intercepted.fileHandleForWriting.fileDescriptor,
-        FileHandle.standardOutput.fileDescriptor
+        stdout
     )
 
     var data: Data = Data()
@@ -42,6 +44,8 @@ internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
     expression()
 
     try await Task.sleep(nanoseconds: 1_000_000)
+
+    dup2(restoreForStdout, stdout)
 
     return data
 }

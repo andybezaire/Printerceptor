@@ -35,13 +35,13 @@ struct PrinterceptorTests {
             #expect(intercepted.isEmpty)
         }
 
-//        @Test
-//        func doesNotCaptureBefore() async throws {
-//            print("Before should not be captured")
-//
-//            let intercepted: Data = try await interceptStdout { }
-//
-//            #expect(intercepted.isEmpty)
-//        }
+        @Test
+        func doesNotCaptureAfter() async throws {
+            let intercepted: Data = try await interceptStdout { }
+
+            print("After should not be captured")
+
+            #expect(intercepted.isEmpty)
+        }
     }
 }
