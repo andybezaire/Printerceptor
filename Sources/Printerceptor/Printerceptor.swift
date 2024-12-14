@@ -27,3 +27,26 @@ public func interceptStdout(_ expression: () -> Void) -> String {
     expression()
     return "Hello, World!"
 }
+
+@MainActor
+internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
+    let intercepted = Pipe()
+
+    dup2(
+        intercepted.fileHandleForWriting.fileDescriptor,
+        FileHandle.standardOutput.fileDescriptor
+    )
+
+    var data: Data = Data()
+
+    intercepted.fileHandleForReading.readabilityHandler = {
+        let availableData = $0.availableData
+        Task { @MainActor in data.append(availableData) }
+    }
+
+    expression()
+
+    try await Task.sleep(nanoseconds: 1_000_000)
+
+    return data
+}
