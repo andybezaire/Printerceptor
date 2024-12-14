@@ -27,4 +27,3 @@ public func interceptStdout(_ expression: () -> Void) -> String {
     expression()
     return "Hello, World!"
 }
-

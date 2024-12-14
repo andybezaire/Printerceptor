@@ -5,9 +5,9 @@ import Printerceptor
 func determineFunctionSignature() async throws {
     let sut = "Hello, World!"
 
-    let capturedOutput = interceptStdout {
+    let captured: String = interceptStdout {
         print(sut)
     }
 
-    #expect(capturedOutput == "Hello, World!")
+    #expect(captured == "Hello, World!")
 }
