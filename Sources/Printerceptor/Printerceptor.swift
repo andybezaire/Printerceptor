@@ -26,11 +26,11 @@ public func interceptStdout(_ expression: () -> Void) async throws -> String {
 @MainActor
 internal func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expression: () -> Void) async throws -> Data {
     let data = Task {
+        let standardOutput = FileHandle.standardOutput.fileDescriptor
+        let originalStandardOutput = dup(standardOutput)
+
         let intercepted = Pipe()
         let interceptedOutput = intercepted.fileHandleForWriting.fileDescriptor
-
-        let standardOutput = FileHandle.standardOutput.fileDescriptor
-        let restoreForStandardOutput = dup(standardOutput)
 
         redirectFileDescriptor(standardOutput, to: interceptedOutput)
 
@@ -43,13 +43,12 @@ internal func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expressi
             buffer.append(availableData)
             if buffer.count > semaphore.count {
                 data.append(buffer.removeFirst())
-
             }
 
             if buffer == semaphore { break }
         }
 
-        redirectFileDescriptor(standardOutput, to: restoreForStandardOutput)
+        redirectFileDescriptor(standardOutput, to: originalStandardOutput)
         try intercepted.fileHandleForReading.close()
 
         return data
