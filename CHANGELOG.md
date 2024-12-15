@@ -19,5 +19,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Intercept Standard Output
 
 
-[unreleased]: https://github.com/andybezaire/TDDKit/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/andybezaire/TDDKit/releases/tag/v1.0.0
+[unreleased]: https://github.com/andybezaire/Printerceptor/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/andybezaire/Printerceptor/releases/tag/v1.0.0
