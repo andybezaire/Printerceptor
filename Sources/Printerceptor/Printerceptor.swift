@@ -55,7 +55,6 @@ internal func interceptStdout(semaphore: String, _ expression: () -> Void) async
         }
 
         redirectFileDescriptor(standardOutput, to: originalStandardOutput)
-        try intercepted.fileHandleForReading.close()
 
         return data
     }
