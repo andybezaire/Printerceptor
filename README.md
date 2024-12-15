@@ -12,6 +12,7 @@ Now you can forget about those laborious manual tests. Printerceptor allows you 
 
 🫵😎🎉
 
+### NOTE: This function has GLOBAL effect, so your tests with output need to be run `.serialized`.
 
 ## Sample Use
 
