@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "Printerceptor",
-    platforms: [.macOS(.v10_15)],
+    platforms: [.macOS(.v12)],
     products: [
         .library(name: "Printerceptor", targets: ["Printerceptor"]),
     ],

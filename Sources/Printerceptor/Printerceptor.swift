@@ -33,11 +33,14 @@ internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
 
     dup2(interceptedOut, standardOutput)
 
-    var data: Data = Data()
+    let data = Task {
+        var data: Data = .init()
 
-    intercepted.fileHandleForReading.readabilityHandler = {
-        let availableData = $0.availableData
-        Task { @MainActor in data.append(availableData) }
+        for try await availableData in intercepted.fileHandleForReading.bytes {
+            data.append(availableData)
+        }
+
+        return data
     }
 
     expression()
@@ -45,6 +48,7 @@ internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
     try await Task.sleep(nanoseconds: 1_000_000)
 
     dup2(restoreForStandardOutput, standardOutput)
+    try intercepted.fileHandleForReading.close()
 
-    return data
+    return try await data.value
 }
