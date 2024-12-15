@@ -32,7 +32,7 @@ internal func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expressi
         let standardOutput = FileHandle.standardOutput.fileDescriptor
         let restoreForStandardOutput = dup(standardOutput)
 
-        dup2(interceptedOutput, standardOutput)
+        redirectFileDescriptor(standardOutput, to: interceptedOutput)
 
         var data: Data = .init()
 
@@ -49,7 +49,7 @@ internal func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expressi
             if buffer == semaphore { break }
         }
 
-        dup2(restoreForStandardOutput, standardOutput)
+        redirectFileDescriptor(standardOutput, to: restoreForStandardOutput)
         try intercepted.fileHandleForReading.close()
 
         return data
@@ -61,4 +61,8 @@ internal func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expressi
     print(semaphore)
 
     return try await data.value
+}
+
+private func redirectFileDescriptor(_ source: Int32, to destination: Int32) {
+    dup2(destination, source)
 }
