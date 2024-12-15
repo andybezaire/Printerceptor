@@ -5,12 +5,15 @@ import Foundation
 /// ```swift
 /// import Testing
 ///
-/// @Test func helloWorld() async throws {
-///     let capturedOutput = interceptStdout {
-///         print("Hello, World!")
-///     }
+/// @Suite(.serialized)
+/// struct ExampleTests {
+///     @Test func helloWorld() async throws {
+///         let capturedOutput = interceptStdout {
+///             print("Hello, World!")
+///         }
 ///
-///     #expect(capturedOutput == "Hello, World!")
+///         #expect(capturedOutput == "Hello, World!")
+///     }
 /// }
 /// ```
 ///
