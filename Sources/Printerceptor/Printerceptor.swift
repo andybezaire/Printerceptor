@@ -24,7 +24,7 @@ public func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expression
 }
 
 @MainActor
-internal func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expression: () -> Void) async throws -> Data {
+internal func interceptStdout(semaphore: String, _ expression: () -> Void) async throws -> Data {
     let data = Task {
         let standardOutput = FileHandle.standardOutput.fileDescriptor
         let originalStandardOutput = dup(standardOutput)

@@ -28,11 +28,13 @@ struct PrinterceptorTests {
 
     @Suite
     struct InterceptStdoutTests {
+        let testSemaphore = "!tESt!SeMapHOre!"
+
         @Test
         func captureData() async throws {
             let sut = "Hello, World!"
 
-            let intercepted: Data = try await interceptStdout {
+            let intercepted: Data = try await interceptStdout(semaphore: testSemaphore) {
                 print(sut)
             }
 
@@ -41,14 +43,14 @@ struct PrinterceptorTests {
 
         @Test
         func noPrintCapturesEmptyData() async throws {
-            let intercepted: Data = try await interceptStdout { }
+            let intercepted: Data = try await interceptStdout(semaphore: testSemaphore) { }
 
             #expect(intercepted.isEmpty)
         }
 
         @Test
         func doesNotCaptureAfter() async throws {
-            let intercepted: Data = try await interceptStdout { }
+            let intercepted: Data = try await interceptStdout(semaphore: testSemaphore) { }
 
             print("After should not be captured")
 
@@ -59,7 +61,7 @@ struct PrinterceptorTests {
         func doesNotCaptureBefore() async throws {
             print("Before should not be captured")
 
-            let intercepted: Data = try await interceptStdout { }
+            let intercepted: Data = try await interceptStdout(semaphore: testSemaphore) { }
 
             #expect(intercepted.isEmpty)
         }
