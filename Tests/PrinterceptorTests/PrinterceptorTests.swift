@@ -15,6 +15,17 @@ struct PrinterceptorTests {
         #expect(captured == "Hello, World!\n")
     }
 
+    @Test
+    func handleCustomSemaphore() async throws {
+        let sut = "!!eNd!oF!fILe!!!"
+
+        let captured: String = try await interceptStdout(semaphore: "cUStOm") {
+            print(sut)
+        }
+
+        #expect(captured == "!!eNd!oF!fILe!!!\n")
+    }
+
     @Suite
     struct InterceptStdoutTests {
         @Test

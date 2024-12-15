@@ -17,8 +17,8 @@ import Foundation
 /// - Parameter expression: the code that prints to `stdout`
 /// - Returns: string version of `stdout`
 @MainActor
-public func interceptStdout(_ expression: () -> Void) async throws -> String {
-    let captured: Data = try await interceptStdout(expression)
+public func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expression: () -> Void) async throws -> String {
+    let captured: Data = try await interceptStdout(semaphore: semaphore, expression)
 
     return .init(data: captured, encoding: .utf8) ?? ""
 }
