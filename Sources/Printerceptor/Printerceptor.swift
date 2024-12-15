@@ -24,7 +24,7 @@ public func interceptStdout(_ expression: () -> Void) async throws -> String {
 }
 
 @MainActor
-internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
+internal func interceptStdout(semaphore: String = "!!END!OF!FILE!!!", _ expression: () -> Void) async throws -> Data {
     let data = Task {
         let intercepted = Pipe()
         let interceptedOut = intercepted.fileHandleForWriting.fileDescriptor
@@ -36,7 +36,7 @@ internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
 
         var data: Data = .init()
 
-        let semaphore: [UInt8] = [33, 33, 69, 78, 68, 33, 79, 70, 33, 70, 73, 76, 69, 33, 33, 33, 10]
+        let semaphore: [UInt8] = Array(semaphore.utf8)
         var buffer: [UInt8] = []
 
         for try await availableData in intercepted.fileHandleForReading.bytes {
@@ -58,7 +58,7 @@ internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
     await Task.yield()
 
     expression()
-    print("!!END!OF!FILE!!!")
+    print(semaphore)
 
     return try await data.value
 }

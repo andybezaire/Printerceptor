@@ -52,5 +52,14 @@ struct PrinterceptorTests {
 
             #expect(intercepted.isEmpty)
         }
+
+        @Test
+        func findsCustomSemaphore() async throws {
+            let unique = UUID().uuidString
+
+            let intercepted: Data = try await interceptStdout(semaphore: unique) { }
+
+            #expect(intercepted.isEmpty)
+        }
     }
 }
