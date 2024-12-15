@@ -32,7 +32,11 @@ internal func interceptStdout(semaphore: String, _ expression: () -> Void) async
         let intercepted = Pipe()
         let interceptedOutput = intercepted.fileHandleForWriting.fileDescriptor
 
+        let redirectBack = Pipe()
+        let redirectBackOutput = redirectBack.fileHandleForWriting.fileDescriptor
+
         redirectFileDescriptor(standardOutput, to: interceptedOutput)
+        redirectFileDescriptor(redirectBackOutput, to: originalStandardOutput)
 
         var data: Data = .init()
 
@@ -42,7 +46,9 @@ internal func interceptStdout(semaphore: String, _ expression: () -> Void) async
         for try await availableData in intercepted.fileHandleForReading.bytes {
             buffer.append(availableData)
             if buffer.count > semaphore.count {
-                data.append(buffer.removeFirst())
+                let validData = buffer.removeFirst()
+                data.append(validData)
+                try redirectBack.fileHandleForWriting.write(contentsOf: [validData])
             }
 
             if buffer == semaphore { break }
