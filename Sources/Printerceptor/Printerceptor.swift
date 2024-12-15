@@ -27,12 +27,12 @@ public func interceptStdout(_ expression: () -> Void) async throws -> String {
 internal func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expression: () -> Void) async throws -> Data {
     let data = Task {
         let intercepted = Pipe()
-        let interceptedOut = intercepted.fileHandleForWriting.fileDescriptor
+        let interceptedOutput = intercepted.fileHandleForWriting.fileDescriptor
 
         let standardOutput = FileHandle.standardOutput.fileDescriptor
         let restoreForStandardOutput = dup(standardOutput)
 
-        dup2(interceptedOut, standardOutput)
+        dup2(interceptedOutput, standardOutput)
 
         var data: Data = .init()
 
