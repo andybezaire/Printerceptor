@@ -24,7 +24,7 @@ public func interceptStdout(_ expression: () -> Void) async throws -> String {
 }
 
 @MainActor
-internal func interceptStdout(semaphore: String = "!!END!OF!FILE!!!", _ expression: () -> Void) async throws -> Data {
+internal func interceptStdout(semaphore: String = "!!eNd!oF!fILe!!!", _ expression: () -> Void) async throws -> Data {
     let data = Task {
         let intercepted = Pipe()
         let interceptedOut = intercepted.fileHandleForWriting.fileDescriptor
