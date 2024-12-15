@@ -25,15 +25,15 @@ public func interceptStdout(_ expression: () -> Void) async throws -> String {
 
 @MainActor
 internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
-    let intercepted = Pipe()
-    let interceptedOut = intercepted.fileHandleForWriting.fileDescriptor
-
-    let standardOutput = FileHandle.standardOutput.fileDescriptor
-    let restoreForStandardOutput = dup(standardOutput)
-
-    dup2(interceptedOut, standardOutput)
-
     let data = Task {
+        let intercepted = Pipe()
+        let interceptedOut = intercepted.fileHandleForWriting.fileDescriptor
+
+        let standardOutput = FileHandle.standardOutput.fileDescriptor
+        let restoreForStandardOutput = dup(standardOutput)
+
+        dup2(interceptedOut, standardOutput)
+
         var data: Data = .init()
 
         let semaphore: [UInt8] = [33, 33, 69, 78, 68, 33, 79, 70, 33, 70, 73, 76, 69, 33, 33, 33, 10]
@@ -54,6 +54,8 @@ internal func interceptStdout(_ expression: () -> Void) async throws -> Data {
 
         return data
     }
+
+    await Task.yield()
 
     expression()
     print("!!END!OF!FILE!!!")
